@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Импорт CSV')}"></head>
+<body>
+<header th:replace="~{layout :: header}"></header>
+
+<main class="container page">
+    <section class="panel contact-form-panel">
+        <h1>Импорт CSV</h1>
+        <p class="note">
+            Файл в кодировке UTF-8, четыре колонки: <code>name,surname,email,phoneNumber</code>.
+            Заголовок не нужен. Поддерживаются кавычки, запятые внутри кавычек и экранированные кавычки.
+            Пустые email и телефон импортируются как пустые значения.
+        </p>
+
+        <div th:if="${errorMessage}" class="alert alert-error" role="alert" th:text="${errorMessage}"></div>
+        <div id="import-client-error" class="alert alert-error" role="alert" hidden></div>
+
+        <form id="import-form"
+              th:action="@{/contacts/import}"
+              th:attr="data-csrf-header=${csrfHeaderName},data-csrf-token=${csrfTokenValue},data-max-file-size=${maxFileSizeBytes}"
+              method="post"
+              enctype="multipart/form-data"
+              class="auth-form">
+            <label for="file">CSV-файл</label>
+            <input type="file" id="file" name="file" accept=".csv,text/csv" required>
+
+            <p class="note">Максимальный размер файла — 1 MB.</p>
+
+            <div class="form-actions">
+                <button type="submit" id="import-submit" class="button">Загрузить</button>
+                <a class="button-secondary" th:href="@{/contacts}">Отмена</a>
+            </div>
+        </form>
+    </section>
+</main>
+
+<footer th:replace="~{layout :: footer}"></footer>
+
+<script>
+    (function () {
+        const form = document.getElementById('import-form');
+        if (!form) {
+            return;
+        }
+
+        const fileInput = document.getElementById('file');
+        const submitButton = document.getElementById('import-submit');
+        const errorBox = document.getElementById('import-client-error');
+        const maxFileSize = Number(form.dataset.maxFileSize);
+
+        function showError(message) {
+            errorBox.textContent = message;
+            errorBox.hidden = false;
+        }
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            errorBox.hidden = true;
+
+            const file = fileInput.files && fileInput.files[0];
+            if (!file) {
+                showError('Выберите CSV-файл.');
+                return;
+            }
+            if (file.size === 0) {
+                showError('Выбранный файл пуст.');
+                return;
+            }
+            if (file.size > maxFileSize) {
+                showError('Файл превышает допустимый размер (не более 1 MB).');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file, file.name);
+
+            const headers = {};
+            headers[form.dataset.csrfHeader] = form.dataset.csrfToken;
+
+            submitButton.disabled = true;
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: headers,
+                credentials: 'same-origin'
+            }).then(function (response) {
+                if (response.redirected) {
+                    window.location.assign(response.url);
+                    return;
+                }
+                if (response.status === 413) {
+                    showError('Файл превышает допустимый размер (не более 1 MB).');
+                    submitButton.disabled = false;
+                    return;
+                }
+                if (response.status === 403) {
+                    showError('Не удалось подтвердить безопасность формы. Обновите страницу и попробуйте снова.');
+                    submitButton.disabled = false;
+                    return;
+                }
+                showError('Не удалось выполнить импорт. Обновите страницу и попробуйте снова.');
+                submitButton.disabled = false;
+            }).catch(function () {
+                showError('Не удалось связаться с сервером. Попробуйте позже.');
+                submitButton.disabled = false;
+            });
+        });
+    })();
+</script>
+</body>
+</html>

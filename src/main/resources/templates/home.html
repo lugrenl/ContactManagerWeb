@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Главная')}"></head>
+<body>
+<header th:replace="~{layout :: header}"></header>
+
+<main class="container page">
+    <section class="hero">
+        <h1>ContactManager Web</h1>
+        <p class="lead">Веб-клиент запущен и готов к работе.</p>
+
+        <div th:if="${infoMessage}" class="alert alert-info" role="status" th:text="${infoMessage}"></div>
+
+        <div th:if="${authenticated}" class="home-state">
+            <p>Вы вошли как <strong th:text="${username}">пользователь</strong>.</p>
+            <p th:if="${isAdmin}" class="note">Учётная запись имеет административные права.</p>
+            <p><a class="button" th:href="@{/contacts}">Мои контакты</a></p>
+        </div>
+        <div th:unless="${authenticated}" class="home-state">
+            <p><a th:href="@{/login}">Войдите</a> или <a th:href="@{/register}">зарегистрируйтесь</a>, чтобы работать с контактами.</p>
+        </div>
+
+        <p>Адрес API: <code th:text="${apiBaseUrl}">http://localhost:8080</code></p>
+        <p class="note">Импорт CSV и административные разделы появятся на следующих этапах.</p>
+    </section>
+</main>
+
+<footer th:replace="~{layout :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Все контакты')}"></head>
+<body>
+<header th:replace="~{layout :: header}"></header>
+
+<main class="container page">
+    <nav th:replace="~{layout :: adminNav}"></nav>
+
+    <section class="panel">
+        <div class="page-header">
+            <div>
+                <h1>Все контакты</h1>
+                <p class="note">Контакты всех пользователей. Раздел доступен только для просмотра.</p>
+            </div>
+        </div>
+
+        <div th:if="${#lists.isEmpty(rows)}" class="empty-state">
+            <p>Контакты не найдены.</p>
+        </div>
+
+        <div th:unless="${#lists.isEmpty(rows)}" class="table-wrapper">
+            <table class="contact-table">
+                <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Имя</th>
+                    <th scope="col">Фамилия</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Телефон</th>
+                    <th scope="col">Владелец</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="row : ${rows}">
+                    <td th:text="${row.contact.id}">1</td>
+                    <td th:text="${row.contact.name}">Иван</td>
+                    <td th:text="${row.contact.surname}">Иванов</td>
+                    <td>
+                        <span th:if="${row.contact.email != null and !row.contact.email.isBlank()}"
+                              th:text="${row.contact.email}">ivan@example.com</span>
+                        <span th:unless="${row.contact.email != null and !row.contact.email.isBlank()}"
+                              class="muted">—</span>
+                    </td>
+                    <td>
+                        <span th:if="${row.contact.phoneNumber != null and !row.contact.phoneNumber.isBlank()}"
+                              th:text="${row.contact.phoneNumber}">+79990000000</span>
+                        <span th:unless="${row.contact.phoneNumber != null and !row.contact.phoneNumber.isBlank()}"
+                              class="muted">—</span>
+                    </td>
+                    <td th:text="${row.ownerDisplay}">Имя (ID 1)</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{layout :: footer}"></footer>
+</body>
+</html>

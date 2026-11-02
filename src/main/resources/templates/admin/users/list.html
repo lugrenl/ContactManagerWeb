@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Пользователи')}"></head>
+<body>
+<header th:replace="~{layout :: header}"></header>
+
+<main class="container page">
+    <nav th:replace="~{layout :: adminNav}"></nav>
+
+    <section class="panel">
+        <div class="page-header">
+            <div>
+                <h1>Пользователи</h1>
+                <p class="note">Управление учётными записями и ролями.</p>
+            </div>
+        </div>
+
+        <div th:if="${infoMessage}" class="alert alert-info" role="status" th:text="${infoMessage}"></div>
+        <div th:if="${errorMessage}" class="alert alert-error" role="alert" th:text="${errorMessage}"></div>
+
+        <div th:if="${#lists.isEmpty(users)}" class="empty-state">
+            <p>Пользователи не найдены.</p>
+        </div>
+
+        <div th:unless="${#lists.isEmpty(users)}" class="table-wrapper">
+            <table class="contact-table">
+                <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Имя</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Роль</th>
+                    <th scope="col">Действия</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="user : ${users}">
+                    <td th:text="${user.id}">1</td>
+                    <td th:text="${user.name}">admin</td>
+                    <td th:text="${user.email}">admin@example.com</td>
+                    <td th:text="${user.roleLabel}">Администратор</td>
+                    <td class="actions">
+                        <a th:href="@{/admin/users/{id}/edit(id=${user.id})}">Редактировать</a>
+                        <form th:action="@{/admin/users/{id}/delete(id=${user.id})}" method="post" class="inline-form"
+                              onsubmit="return confirm('Удалить пользователя? Все его контакты также будут удалены.');">
+                            <button type="submit" class="link-button danger">Удалить</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p class="note warning-note">
+            Удаление пользователя необратимо и приводит к удалению всех его контактов.
+        </p>
+    </section>
+</main>
+
+<footer th:replace="~{layout :: footer}"></footer>
+</body>
+</html>

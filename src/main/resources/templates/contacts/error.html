@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head(${errorTitle})}"></head>
+<body>
+<header th:replace="~{layout :: header}"></header>
+
+<main class="container page">
+    <section class="panel">
+        <h1 th:text="${errorTitle}">Ошибка</h1>
+        <div class="alert alert-error" role="alert" th:text="${errorMessage}">Не удалось выполнить операцию.</div>
+        <ul th:if="${errorDetails != null and !#lists.isEmpty(errorDetails)}" class="error-list">
+            <li th:each="detail : ${errorDetails}" th:text="${detail}"></li>
+        </ul>
+        <p class="form-actions">
+            <a class="button" th:href="@{/contacts}">Вернуться к контактам</a>
+        </p>
+    </section>
+</main>
+
+<footer th:replace="~{layout :: footer}"></footer>
+</body>
+</html>

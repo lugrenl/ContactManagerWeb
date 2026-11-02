@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Редактирование пользователя')}"></head>
+<body>
+<header th:replace="~{layout :: header}"></header>
+
+<main class="container page">
+    <nav th:replace="~{layout :: adminNav}"></nav>
+
+    <section class="panel contact-form-panel">
+        <h1>Редактирование пользователя</h1>
+        <p class="note" th:text="'Пользователь ID ' + ${userId}">Пользователь ID 1</p>
+        <p class="note">Для сохранения изменений необходимо ввести новый пароль. Пароль не отображается.</p>
+
+        <div th:if="${errorMessage}" class="alert alert-error" role="alert" th:text="${errorMessage}"></div>
+        <ul th:if="${errorDetails != null and !#lists.isEmpty(errorDetails)}" class="error-list">
+            <li th:each="detail : ${errorDetails}" th:text="${detail}"></li>
+        </ul>
+
+        <form th:action="@{/admin/users/{id}/edit(id=${userId})}" th:object="${userForm}" method="post" class="auth-form">
+            <label for="name">Имя пользователя</label>
+            <input type="text" id="name" th:field="*{name}" autocomplete="username" required>
+            <p class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
+
+            <label for="email">Email</label>
+            <input type="email" id="email" th:field="*{email}" autocomplete="email" required>
+            <p class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
+
+            <label for="role">Роль</label>
+            <select id="role" th:field="*{role}">
+                <option value="">Не менять роль</option>
+                <option value="ROLE_USER">Пользователь</option>
+                <option value="ROLE_ADMIN">Администратор</option>
+            </select>
+            <p class="field-error" th:if="${#fields.hasErrors('role')}" th:errors="*{role}"></p>
+
+            <label for="password">Новый пароль</label>
+            <input type="password" id="password" name="password" minlength="8" maxlength="20"
+                   autocomplete="new-password" required>
+            <p class="note">Пароль обязателен при каждом сохранении и нигде не отображается.</p>
+            <p class="field-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
+
+            <div class="form-actions">
+                <button type="submit" class="button">Сохранить</button>
+                <a class="button-secondary" th:href="@{/admin/users}">Отмена</a>
+            </div>
+        </form>
+    </section>
+</main>
+
+<footer th:replace="~{layout :: footer}"></footer>
+</body>
+</html>

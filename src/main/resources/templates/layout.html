@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title} + ' — ContactManager Web'">ContactManager Web</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css">
+</head>
+<body>
+<header th:fragment="header" class="site-header">
+    <div class="container header-inner">
+        <a class="brand" th:href="@{/}">ContactManager Web</a>
+        <nav class="site-nav" aria-label="Основная навигация">
+            <th:block th:if="${authenticated}">
+                <a th:href="@{/contacts}">Мои контакты</a>
+                <a th:if="${isAdmin}" th:href="@{/admin/users}">Администрирование</a>
+                <span class="user-name">
+                    Вы вошли как <strong th:text="${username}">пользователь</strong>
+                </span>
+                <span th:if="${isAdmin}" class="badge">Администратор</span>
+                <form th:action="@{/logout}" method="post" class="inline-form">
+                    <button type="submit" class="link-button">Выйти</button>
+                </form>
+            </th:block>
+            <th:block th:unless="${authenticated}">
+                <a th:href="@{/login}">Вход</a>
+                <a th:href="@{/register}">Регистрация</a>
+            </th:block>
+        </nav>
+    </div>
+</header>
+<footer th:fragment="footer" class="site-footer">
+    <div class="container">
+        <span>ContactManager Web</span>
+    </div>
+</footer>
+<nav th:fragment="adminNav" class="admin-nav" aria-label="Администрирование">
+    <a th:href="@{/admin/users}">Пользователи</a>
+    <a th:href="@{/admin/contacts}">Все контакты</a>
+</nav>
+</body>
+</html>

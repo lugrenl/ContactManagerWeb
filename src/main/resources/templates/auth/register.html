@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Регистрация')}"></head>
+<body>
+<header th:replace="~{layout :: header}"></header>
+
+<main class="container page">
+    <section class="auth-card">
+        <h1>Регистрация</h1>
+        <p class="note">Создайте учётную запись с ролью обычного пользователя.</p>
+
+        <div th:if="${errorMessage}" class="alert alert-error" role="alert" th:text="${errorMessage}"></div>
+        <ul th:if="${errorDetails != null and !#lists.isEmpty(errorDetails)}" class="error-list">
+            <li th:each="detail : ${errorDetails}" th:text="${detail}"></li>
+        </ul>
+
+        <form th:action="@{/register}" th:object="${registerForm}" method="post" class="auth-form">
+            <label for="name">Имя пользователя</label>
+            <input type="text" id="name" th:field="*{name}" autocomplete="username" required>
+            <p class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
+
+            <label for="email">Электронная почта</label>
+            <input type="email" id="email" th:field="*{email}" autocomplete="email" required>
+            <p class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
+
+            <label for="password">Пароль</label>
+            <input type="password" id="password" name="password" autocomplete="new-password" required>
+            <p class="field-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
+
+            <button type="submit" class="button">Зарегистрироваться</button>
+        </form>
+
+        <p class="note">Уже есть учётная запись? <a th:href="@{/login}">Войти</a>.</p>
+    </section>
+</main>
+
+<footer th:replace="~{layout :: footer}"></footer>
+</body>
+</html>
